@@ -7,12 +7,13 @@
       "rev": "PG15/v1.5.0-rc0",
       "hash": "sha256-webZWgWZGnSoXwTpk816tjbtHV1UIlXkogpBDAEL4gM="
     },
-    "1.6.0": {
+    "1.7.0": {
       "postgresql": [
-        "17"
+        "17",
+        "orioledb-17"
       ],
-      "rev": "PG17/v1.6.0-rc0",
-      "hash": "sha256-gqoAhVqQaDhe5CIcTc//1HonQLP1zoBIGuCQuXsJy+A="
+      "rev": "PG17/v1.7.0-rc0",
+      "hash": "sha256-hAjhNj/benwZbbuxDl9RSjwWRai9CUozbEN6ecPKoFE="
     }
   },
   "http": {

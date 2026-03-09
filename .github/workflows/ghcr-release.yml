@@ -75,7 +75,6 @@ jobs:
 
       - uses: ./.github/actions/nix-install-ephemeral
 
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3 # v3.12.0
 
