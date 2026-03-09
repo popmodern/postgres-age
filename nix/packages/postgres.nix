@@ -19,6 +19,7 @@
       # rollout new versions of these critical things easier without having to
       # go through the upstream release engineering process.
       ourExtensions = [
+        ../ext/age.nix
         ../ext/rum.nix
         ../ext/timescaledb.nix
         ../ext/pgroonga
