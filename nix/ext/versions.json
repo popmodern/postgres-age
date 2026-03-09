@@ -1,13 +1,13 @@
 {
   "age": {
-    "1.5.0-rc0": {
+    "1.5.0": {
       "postgresql": [
         "15"
       ],
       "rev": "PG15/v1.5.0-rc0",
       "hash": "sha256-webZWgWZGnSoXwTpk816tjbtHV1UIlXkogpBDAEL4gM="
     },
-    "1.6.0-rc0": {
+    "1.6.0": {
       "postgresql": [
         "17"
       ],
