@@ -15,9 +15,6 @@ RUN apk add --no-cache \
     sudo \
     xz
 
-# Nix installer bootstrap still checks for this group even in --no-daemon mode.
-RUN addgroup -S nixbld
-
 # Create users (Alpine syntax)
 RUN addgroup -S postgres && \
     adduser -S -h /var/lib/postgresql -s /bin/bash -G postgres postgres && \
@@ -29,23 +26,20 @@ RUN cat <<EOF > /tmp/extra-nix.conf
 extra-experimental-features = nix-command flakes
 extra-substituters = https://nix-postgres-artifacts.s3.amazonaws.com
 extra-trusted-public-keys = nix-postgres-artifacts:dGZlQOvKcNEjvT7QEAJbcV6b6uk7VF/hWMjhYleiaLI=
-# Single-user install in container: do not require nixbld group.
-build-users-group =
 EOF
-RUN getent group nixbld && grep -n '^build-users-group' /tmp/extra-nix.conf && \
-    curl -L https://releases.nixos.org/nix/nix-2.33.2/install | sh -s -- --no-daemon --no-channel-add --yes --nix-extra-conf-file /tmp/extra-nix.conf
-ENV PATH="${PATH}:/nix/var/nix/profiles/default/bin:/root/.nix-profile/bin"
+RUN curl -L https://releases.nixos.org/nix/nix-2.33.2/install | sh -s -- --daemon --no-channel-add --yes --nix-extra-conf-file /tmp/extra-nix.conf
+ENV PATH="${PATH}:/nix/var/nix/profiles/default/bin"
 
 WORKDIR /nixpg
 COPY . .
 
 # Build PostgreSQL with extensions
-RUN nix profile add --profile /nix/var/nix/profiles/default path:.#psql_15_slim/bin
+RUN nix profile add path:.#psql_15_slim/bin
 
 RUN nix store gc
 
 # Build groonga and copy plugins
-RUN nix profile add --profile /nix/var/nix/profiles/default path:.#supabase-groonga && \
+RUN nix profile add path:.#supabase-groonga && \
     mkdir -p /tmp/groonga-plugins && \
     cp -r /nix/var/nix/profiles/default/lib/groonga/plugins /tmp/groonga-plugins/
 
