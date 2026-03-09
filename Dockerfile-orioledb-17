@@ -19,41 +19,32 @@ RUN apk add --no-cache \
 RUN addgroup -S postgres && \
     adduser -S -h /var/lib/postgresql -s /bin/bash -G postgres postgres && \
     addgroup -S wal-g && \
-    adduser -S -s /bin/bash -G wal-g wal-g && \
-    addgroup -S nix && \
-    adduser -S -h /home/nix -s /bin/bash -G nix nix && \
-    mkdir -p /nix && \
-    chown -R nix:nix /nix /home/nix
+    adduser -S -s /bin/bash -G wal-g wal-g
 
 # Create nix config
 RUN cat <<EOF > /tmp/extra-nix.conf
 extra-experimental-features = nix-command flakes
 extra-substituters = https://nix-postgres-artifacts.s3.amazonaws.com
 extra-trusted-public-keys = nix-postgres-artifacts:dGZlQOvKcNEjvT7QEAJbcV6b6uk7VF/hWMjhYleiaLI=
-# Buildx/QEMU containers do not reliably support Nix sandbox seccomp setup.
-sandbox = false
-# Single-user container builds should use the invoking user instead of nixbld workers.
-build-users-group =
 EOF
-# Use a single-user install in containers; the daemon install expects a fuller init/systemd environment.
-RUN sudo -u nix -H sh -lc "curl -L https://releases.nixos.org/nix/nix-2.33.2/install | sh -s -- --no-daemon --no-channel-add --yes --nix-extra-conf-file /tmp/extra-nix.conf"
+RUN curl -L https://releases.nixos.org/nix/nix-2.33.2/install | sh -s -- --daemon --no-channel-add --yes --nix-extra-conf-file /tmp/extra-nix.conf
 
-ENV PATH="/home/nix/.nix-profile/bin:/nix/var/nix/profiles/default/bin:${PATH}"
+ENV PATH="${PATH}:/nix/var/nix/profiles/default/bin"
 
 WORKDIR /nixpg
-COPY --chown=nix:nix . .
+COPY . .
 
 # Build PostgreSQL with extensions
-RUN sudo -u nix -H nix profile add --profile /nix/var/nix/profiles/default path:.#psql_orioledb-17_slim/bin
+RUN nix profile add path:.#psql_orioledb-17_slim/bin
 
-RUN sudo -u nix -H nix store gc
+RUN nix store gc
 
 # Build groonga and copy plugins
-RUN sudo -u nix -H nix profile add --profile /nix/var/nix/profiles/default path:.#supabase-groonga && \
+RUN nix profile add path:.#supabase-groonga && \
     mkdir -p /tmp/groonga-plugins && \
     cp -r /nix/var/nix/profiles/default/lib/groonga/plugins /tmp/groonga-plugins/
 
-RUN sudo -u nix -H nix store gc
+RUN nix store gc
 
 ####################
 # Stage 2: Gosu builder
