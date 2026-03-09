@@ -14,7 +14,7 @@ jobs:
       postgres_versions: ${{ steps.set-versions.outputs.postgres_versions }}
     steps:
       - name: Checkout Repo
-        uses: supabase/postgres/.github/actions/shared-checkout@HEAD
+        uses: ./.github/actions/shared-checkout
       - uses: ./.github/actions/nix-install-ephemeral
       - name: Set PostgreSQL versions
         id: set-versions
@@ -38,7 +38,7 @@ jobs:
       POSTGRES_PASSWORD: password
     steps:
       - name: Checkout Repo
-        uses: supabase/postgres/.github/actions/shared-checkout@HEAD
+        uses: ./.github/actions/shared-checkout
       - uses: ./.github/actions/nix-install-ephemeral
       - name: Set PostgreSQL version environment variable
         run: echo "POSTGRES_MAJOR_VERSION=${{ matrix.postgres_version }}" >> $GITHUB_ENV
@@ -63,7 +63,7 @@ jobs:
           echo "EOF" >> $GITHUB_OUTPUT
       - name: verify schema.sql is committed
         run: |
-          nix run github:supabase/postgres/${{ github.sha }}#dbmate-tool -- --version ${{ env.PGMAJOR }} --flake-url github:supabase/postgres/${{ github.sha }}
+          nix run github:${{ github.repository }}/${{ github.sha }}#dbmate-tool -- --version ${{ env.PGMAJOR }} --flake-url github:${{ github.repository }}/${{ github.sha }}
           if ! git diff --exit-code --quiet migrations/schema-${{ env.PGMAJOR }}.sql; then
             echo "Detected changes in schema.sql:"
             git diff migrations/schema-${{ env.PGMAJOR }}.sql

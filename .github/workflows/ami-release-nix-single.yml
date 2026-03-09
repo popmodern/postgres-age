@@ -24,7 +24,7 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: supabase/postgres/.github/actions/shared-checkout@HEAD
+        uses: ./.github/actions/shared-checkout
         with:
           ref: ${{ github.event.inputs.branch }}
 
