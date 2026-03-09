@@ -26,8 +26,10 @@ RUN cat <<EOF > /tmp/extra-nix.conf
 extra-experimental-features = nix-command flakes
 extra-substituters = https://nix-postgres-artifacts.s3.amazonaws.com
 extra-trusted-public-keys = nix-postgres-artifacts:dGZlQOvKcNEjvT7QEAJbcV6b6uk7VF/hWMjhYleiaLI=
+# Buildx/QEMU containers do not reliably support Nix sandbox seccomp setup.
 sandbox = false
 EOF
+# Use a single-user install in containers; the daemon install expects a fuller init/systemd environment.
 RUN curl -L https://releases.nixos.org/nix/nix-2.33.2/install | sh -s -- --no-daemon --no-channel-add --yes --nix-extra-conf-file /tmp/extra-nix.conf
 ENV PATH="/root/.nix-profile/bin:/nix/var/nix/profiles/default/bin:${PATH}"
 
