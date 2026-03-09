@@ -27,20 +27,20 @@ extra-experimental-features = nix-command flakes
 extra-substituters = https://nix-postgres-artifacts.s3.amazonaws.com
 extra-trusted-public-keys = nix-postgres-artifacts:dGZlQOvKcNEjvT7QEAJbcV6b6uk7VF/hWMjhYleiaLI=
 EOF
-RUN curl -L https://releases.nixos.org/nix/nix-2.33.2/install | sh -s -- --daemon --no-channel-add --yes --nix-extra-conf-file /tmp/extra-nix.conf
+RUN curl -L https://releases.nixos.org/nix/nix-2.33.2/install | sh -s -- --no-daemon --no-channel-add --yes --nix-extra-conf-file /tmp/extra-nix.conf
 
-ENV PATH="${PATH}:/nix/var/nix/profiles/default/bin"
+ENV PATH="${PATH}:/nix/var/nix/profiles/default/bin:/root/.nix-profile/bin"
 
 WORKDIR /nixpg
 COPY . .
 
 # Build PostgreSQL with extensions
-RUN nix profile add path:.#psql_orioledb-17_slim/bin
+RUN nix profile add --profile /nix/var/nix/profiles/default path:.#psql_orioledb-17_slim/bin
 
 RUN nix store gc
 
 # Build groonga and copy plugins
-RUN nix profile add path:.#supabase-groonga && \
+RUN nix profile add --profile /nix/var/nix/profiles/default path:.#supabase-groonga && \
     mkdir -p /tmp/groonga-plugins && \
     cp -r /nix/var/nix/profiles/default/lib/groonga/plugins /tmp/groonga-plugins/
 
