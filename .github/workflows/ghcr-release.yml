@@ -60,6 +60,7 @@ jobs:
   build_and_push:
     needs: prepare
     strategy:
+      fail-fast: false
       matrix:
         postgres: ${{ fromJson(needs.prepare.outputs.matrix_config).include }}
         arch: [amd64, arm64]
