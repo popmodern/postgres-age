@@ -15,6 +15,9 @@ RUN apk add --no-cache \
     sudo \
     xz
 
+# Nix installer bootstrap still checks for this group even in --no-daemon mode.
+RUN addgroup -S nixbld
+
 # Create users (Alpine syntax)
 RUN addgroup -S postgres && \
     adduser -S -h /var/lib/postgresql -s /bin/bash -G postgres postgres && \
@@ -29,7 +32,8 @@ extra-trusted-public-keys = nix-postgres-artifacts:dGZlQOvKcNEjvT7QEAJbcV6b6uk7V
 # Single-user install in container: do not require nixbld group.
 build-users-group =
 EOF
-RUN curl -L https://releases.nixos.org/nix/nix-2.33.2/install | sh -s -- --no-daemon --no-channel-add --yes --nix-extra-conf-file /tmp/extra-nix.conf
+RUN getent group nixbld && grep -n '^build-users-group' /tmp/extra-nix.conf && \
+    curl -L https://releases.nixos.org/nix/nix-2.33.2/install | sh -s -- --no-daemon --no-channel-add --yes --nix-extra-conf-file /tmp/extra-nix.conf
 
 ENV PATH="${PATH}:/nix/var/nix/profiles/default/bin:/root/.nix-profile/bin"
 
