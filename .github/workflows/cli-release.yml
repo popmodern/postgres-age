@@ -68,7 +68,7 @@ jobs:
           shopt -u dotglob
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4 # v4.6.2
         with:
           name: supabase-postgres-${{ matrix.arch }}
           path: supabase-postgres-${{ steps.version.outputs.version }}-${{ matrix.arch }}
@@ -91,7 +91,7 @@ jobs:
             arch: linux-arm64
     steps:
       - name: Download artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4 # v4.3.0
         with:
           name: supabase-postgres-${{ matrix.arch }}
           path: .
@@ -394,7 +394,7 @@ jobs:
       contents: write
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4 # v4.3.0
         with:
           path: artifacts
 
@@ -440,7 +440,7 @@ jobs:
           ls -lh release/
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v2 # v2.5.0
         with:
           files: release/*
           generate_release_notes: true

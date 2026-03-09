@@ -19,14 +19,14 @@ jobs:
     - name: Checkout Repo
       uses: supabase/postgres/.github/actions/shared-checkout@HEAD
     - name: Run ShellCheck
-      uses: ludeeus/action-shellcheck@master
+      uses: ludeeus/action-shellcheck@master # v2.0.0
       env:
         SHELLCHECK_OPTS: -e SC2001 -e SC2002 -e SC2143
       with:
         scandir: './ansible/files/admin_api_scripts'
 
     - name: Run ShellCheck on pg_upgrade scripts
-      uses: ludeeus/action-shellcheck@master
+      uses: ludeeus/action-shellcheck@master # v2.0.0
       env:
         SHELLCHECK_OPTS: -e SC2001 -e SC2002 -e SC2143
       with:
